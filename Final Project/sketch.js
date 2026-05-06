@@ -106,7 +106,7 @@ class Branch {
           let x1 = this.endX + newDX1;
           let y1 = this.endY + newDY1;
 
-          // Check if this position has enough space
+          // Check if this position has enough space for branches
           // Minimum distance is 80 pixels from other branches
           let hasSpace1 = true;
           for (let i = 0; i < branches.length; i++) {
@@ -311,7 +311,7 @@ class Raindrop {
   }
 }
 
-// GLOBAL VARIABLES
+// The Global Variables
 // Hand tracking variables (ml5.js hand pose detection)
 let handPose;        // The hand pose model
 let video;           // Webcam video
@@ -358,7 +358,7 @@ function preload() {
 // This is the setup() runs once at start, initializes everything
 function setup() {
   // Create canvas with fixed size
-  createCanvas(640, 480);
+  createCanvas(1920, 1080);
 
   // This is to start webcam video
   video = createCapture(VIDEO);
@@ -565,7 +565,7 @@ function draw() {
   }
   raindrops = aliveRain;
   
-  // This is TREE REGENERATION
+  // This is how the Trees Regernerate
   // This is to show if all branches have died, create a new trunk
   // This ensures the tree can always regrow
   if (branches.length < 1) {
@@ -593,29 +593,29 @@ function drawNatureBackground() {
   background(skyR, skyG, skyB);
   noStroke();
 
-  // Sun color also shifts - bright yellow when healthy, dim red when polluted
+  // Sun color also shifts, bright yellow when healthy, dim red when polluted
   let sunR = map(environmentalHealth, 0, 100, 200, 255);
   let sunG = map(environmentalHealth, 0, 100, 100, 235);
   let sunB = map(environmentalHealth, 0, 100, 80, 150);
   fill(sunR, sunG, sunB);
   circle(560, 70, 70);
 
-  // Distant hills - green ellipses for depth (also shift slightly with health)
+  // Distant hills, green ellipses for depth (also shift slightly with health)
   let hillG = map(environmentalHealth, 0, 100, 110, 180);
   fill(120, hillG, 110);
   ellipse(150, 390, 500, 160);
   fill(90, hillG - 20, 85);
   ellipse(480, 400, 520, 150);
 
-  // Ground - dark green rectangle at bottom
+  // Ground = dark green rectangle at bottom
   fill(70, 130, 65);
   rect(0, 410, 640, 70);
 
-  // Tree trunk base - brown rectangle
+  // Tree trunk base = brown rectangle
   fill(95, 60, 30);
   rect(300, 390, 40, 50);
 
-  // Tree roots - brown triangles
+  // Tree roots = brown triangles
   fill(60, 40, 25);
   triangle(300, 440, 265, 460, 310, 445);
   triangle(340, 440, 375, 460, 330, 445);
@@ -633,7 +633,7 @@ function drawMicCircle() {
   circle(590, 430, s);
 }
 
-// Draws a small leaf-shaped indicator showing environmental health
+// Draws a small leaf shaped indicator showing environmental health
 // Visual feedback so users see how their actions affect the future world
 function drawHealthBar() {
   // Bar background
