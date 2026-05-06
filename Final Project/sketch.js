@@ -11,22 +11,23 @@ class Branch {
     this.endX = endX;
     this.endY = endY;
     
-    // The current position starts at the beginning (for growth animation)
+    // Current position starts at the beginning (for smooth growth animation)
     this.currentEndX = startX;
     this.currentEndY = startY;
-    // The level tracks how many generations deep this branch is (trunk = 0, first split = 1, etc.)
+    
+    // Level tracks how many generations deep this branch is (trunk = 0, first split = 1, etc.)
     this.level = level;
     
-    // These are the control variables for branch behavior
+    // Control variables for branch behavior
     this.canSplit = true;    // Whether this branch can split into new branches
     this.isGrowing = true;   // Whether branch is currently growing
     this.isDead = false;     // Whether branch should be removed
     
-    // This is the branch lifetime in frames (branches fade away over time to save performance)
+    // Branch lifetime in frames (branches fade away over time to save performance)
     this.life = 1000;
     
-    // This is the branch thickness decreases as level increases (trunk is thick, tips are thin)
-    // map() maps level 0-9 to thickness 16-2
+    // Branch thickness decreases as level increases (trunk is thick, tips are thin)
+    // map() learned in class: maps level 0-9 to thickness 16-2
     this.thickness = map(level, 0, 9, 16, 2);
   }
 
@@ -35,7 +36,7 @@ class Branch {
     // Only grow if the branch is still in growing state
     if (this.isGrowing == true) {
       // lerp() creates smooth animation by moving current position toward target
-      // lerp(start, end, amount), use 0.015 for slow, organic growth
+      // lerp(start, end, amount) - we use 0.015 for slow, organic growth
       this.currentEndX = lerp(this.currentEndX, this.endX, 0.015);
       this.currentEndY = lerp(this.currentEndY, this.endY, 0.015);
 
@@ -51,7 +52,7 @@ class Branch {
     // This is decrease life every frame (branches fade and die over time)
     this.life--;
 
-    // This is how mark branch as dead when life reaches zero
+    // This is how we mark branch as dead when life reaches zero
     if (this.life < 0) {
       this.isDead = true;
     }
@@ -94,7 +95,7 @@ class Branch {
         let dy = this.endY - this.startY;
 
         // Try to create new branches with proper spacing
-        // Try multiple times to find good positions
+        // We'll try multiple times to find good positions
         for (let attempt = 0; attempt < 10; attempt++) {
           // Create first new branch with variation
           // Multiply by 0.7 to make child branches shorter than parent
@@ -106,7 +107,7 @@ class Branch {
           let x1 = this.endX + newDX1;
           let y1 = this.endY + newDY1;
 
-          // Check if this position has enough space for branches
+          // Check if this position has enough space
           // Minimum distance is 80 pixels from other branches
           let hasSpace1 = true;
           for (let i = 0; i < branches.length; i++) {
@@ -274,9 +275,9 @@ class LetterParticle {
   }
 }
 
-// The raindrop class represents nourishing rain
-// The rain shows nature's healing cycle, when care for our environment,
-// The rain comes to nourish the trees humans plant for our future selves
+// NEW: Raindrop class represents nourishing rain
+// Rain shows nature's healing cycle - when we care for our environment,
+// rain comes to nourish the trees we plant for our future selves
 class Raindrop {
   // Constructor sets up a falling raindrop
   constructor(x, y) {
@@ -296,7 +297,7 @@ class Raindrop {
 
     // This is when raindrop reaches the ground, mark it as dead
     // Rain falling shows the world is healthy (visual storytelling)
-    if (this.y > 410) {
+    if (this.y > 692) {
       this.isDead = true;
     }
   }
@@ -311,14 +312,14 @@ class Raindrop {
   }
 }
 
-// The Global Variables
+// GLOBAL VARIABLES
 // Hand tracking variables (ml5.js hand pose detection)
 let handPose;        // The hand pose model
 let video;           // Webcam video
 let hands = [];      // Array storing detected hands
 let options = { maxHands: 1, flipped: true };  // Track 1 hand, flip for mirror effect
 
-// Face tracking variables (ml5.js face mesh detection)
+// NEW: Face tracking variables (ml5.js face mesh detection)
 // Face presence shows the user is "watching over" their future world
 // When the user is present and caring, the environment slowly heals
 let faceMesh;
@@ -328,11 +329,11 @@ let faceOptions = { maxFaces: 1, refineLandmarks: false, flipped: true };
 // Tree and particle arrays
 let branches = [];   // All branch objects
 let letters = [];    // All letter particle objects
-let raindrops = [];  // All raindrop objects (nourishing rain)
+let raindrops = [];  // NEW: All raindrop objects (nourishing rain)
 
-// This shows environmental health tracks the well-being of the future world
-// This connects user actions to the world the future self will live in
-// This establishes a quiet and caring presence represents a healthy enviornemnt. Loud noise represnets pollution and damaged
+// NEW: Environmental health tracks the well-being of the future world
+// Connects user actions to the world the future self will live in
+// Quiet + caring presence = healthy. Loud noise = pollution = damaged
 let environmentalHealth = 100;  // 0 = polluted, 100 = healthy
 
 // Message that breaks apart into letters
@@ -352,23 +353,23 @@ let oldMicLevel = 0; // Previous frame's volume (for detecting changes)
 // preload() runs once before setup, loads the tracking models
 function preload() {
   handPose = ml5.handPose(options);
-  faceMesh = ml5.faceMesh(faceOptions);  // Load face mesh model
+  faceMesh = ml5.faceMesh(faceOptions);  // NEW: load face mesh model
 }
 
 // This is the setup() runs once at start, initializes everything
 function setup() {
   // Create canvas with fixed size
-  createCanvas(1920, 1080);
+  createCanvas(1440, 810);
 
   // This is to start webcam video
   video = createCapture(VIDEO);
-  video.size(640, 480);
-  video.hide();  // draw it ourselves)
+  video.size(1440, 810);
+  video.hide();  // (we'll draw it ourselves)
 
   // This is to start hand detection on the video
   handPose.detectStart(video, gotHands);
 
-  // This is to start face detection (caring presence)
+  // NEW: This is to start face detection (caring presence)
   faceMesh.detectStart(video, gotFaces);
 
   // Initialize sound oscillator
@@ -385,8 +386,8 @@ function setup() {
   mic.start();
 
   // This is to create initial trunk branch at bottom center of screen
-  // This is to start position: (320, 420), End position: (320, 290)
-  branches.push(new Branch(320, 420, 320, 290, 0));
+  // This is to start position: (720, 709), End position: (720, 489)
+  branches.push(new Branch(720, 709, 720, 489, 0));
 }
 
 // This is to callback function that receives hand tracking results
@@ -394,7 +395,7 @@ function gotHands(results) {
   hands = results;  // Store detected hands
 }
 
-// Callback function for face tracking results
+// NEW: callback function for face tracking results
 // Face presence means user is watching over their future world
 function gotFaces(results) {
   faces = results;
@@ -444,7 +445,7 @@ function draw() {
     }
   }
 
-  // The face presence is used to show user "watching over" their future
+  // NEW: FACE PRESENCE - user "watching over" their future
   // When user is present and caring, environment slowly heals + rain falls
   if (faces.length > 0) {
     // Slowly increase environmental health (caring presence helps the world)
@@ -490,8 +491,8 @@ function draw() {
   // This responds to clapping, speaking, or any sudden sound
   if (micLevel > 0.07) {
     if (oldMicLevel < 0.07) {
-      // Loud noise represents pollution - it damages the environment
-      // The future world degrades when humans are too loud/destructive
+      // NEW: Loud noise represents pollution - it damages the environment
+      // The future world degrades when we are too loud/destructive
       // (The sky color will visibly turn gray as health drops)
       environmentalHealth = environmentalHealth - 12;
       if (environmentalHealth < 0) {
@@ -509,7 +510,7 @@ function draw() {
       }
 
       // This is to release extra letters from the trunk when sound is detected
-      releaseLetters(320, 400, 8);
+      releaseLetters(720, 675, 8);
     }
   }
 
@@ -549,7 +550,7 @@ function draw() {
   }
   letters = aliveLetters;
 
-  // UPDATE AND DRAW ALL RAINDROPS
+  // NEW: UPDATE AND DRAW ALL RAINDROPS
   // Rain nourishes the tree and represents environmental healing
   for (let i = 0; i < raindrops.length; i++) {
     raindrops[i].update();
@@ -565,16 +566,16 @@ function draw() {
   }
   raindrops = aliveRain;
   
-  // This is how the Trees Regernerate
+  // This is TREE REGENERATION
   // This is to show if all branches have died, create a new trunk
   // This ensures the tree can always regrow
   if (branches.length < 1) {
-    branches.push(new Branch(320, 420, 320, 290, 0));
+    branches.push(new Branch(720, 709, 720, 489, 0));
   }
 
   // This is to draw microphone level indicator
   drawMicCircle();
-  // Draw environmental health indicator (visual feedback)
+  // NEW: draw environmental health indicator (visual feedback)
   drawHealthBar();
   // Draw instructions for user
   drawInstructions();
@@ -582,7 +583,7 @@ function draw() {
 
 // HELPER FUNCTIONS
 // Draws the nature background (sky, sun, hills, ground)
-// Sky and sun colors now shift based on environmentalHealth
+// NEW: Sky and sun colors now shift based on environmentalHealth
 // Healthy = bright blue sky and warm sun. Polluted = gray smoggy sky
 function drawNatureBackground() {
   // map() the health value to sky color components
@@ -593,32 +594,32 @@ function drawNatureBackground() {
   background(skyR, skyG, skyB);
   noStroke();
 
-  // Sun color also shifts, bright yellow when healthy, dim red when polluted
+  // Sun color also shifts - bright yellow when healthy, dim red when polluted
   let sunR = map(environmentalHealth, 0, 100, 200, 255);
   let sunG = map(environmentalHealth, 0, 100, 100, 235);
   let sunB = map(environmentalHealth, 0, 100, 80, 150);
   fill(sunR, sunG, sunB);
-  circle(560, 70, 70);
+  circle(1260, 118, 118);
 
-  // Distant hills, green ellipses for depth (also shift slightly with health)
+  // Distant hills - green ellipses for depth (also shift slightly with health)
   let hillG = map(environmentalHealth, 0, 100, 110, 180);
   fill(120, hillG, 110);
-  ellipse(150, 390, 500, 160);
+  ellipse(338, 658, 1125, 270);
   fill(90, hillG - 20, 85);
-  ellipse(480, 400, 520, 150);
+  ellipse(1080, 675, 1170, 253);
 
-  // Ground = dark green rectangle at bottom
+  // Ground - dark green rectangle at bottom
   fill(70, 130, 65);
-  rect(0, 410, 640, 70);
+  rect(0, 692, 1440, 118);
 
-  // Tree trunk base = brown rectangle
+  // Tree trunk base - brown rectangle
   fill(95, 60, 30);
-  rect(300, 390, 40, 50);
+  rect(675, 658, 90, 84);
 
-  // Tree roots = brown triangles
+  // Tree roots - brown triangles
   fill(60, 40, 25);
-  triangle(300, 440, 265, 460, 310, 445);
-  triangle(340, 440, 375, 460, 330, 445);
+  triangle(675, 743, 596, 776, 698, 751);
+  triangle(765, 743, 844, 776, 743, 751);
 }
 
 // Visual indicator showing microphone level
@@ -630,23 +631,23 @@ function drawMicCircle() {
   // Draw pulsing circle in bottom right corner
   fill(255, 240, 180, 90);
   noStroke();
-  circle(590, 430, s);
+  circle(1328, 726, s);
 }
 
-// Draws a small leaf shaped indicator showing environmental health
+// NEW: Draws a small leaf-shaped indicator showing environmental health
 // Visual feedback so users see how their actions affect the future world
 function drawHealthBar() {
   // Bar background
   fill(0, 0, 0, 100);
   noStroke();
-  rect(540, 20, 80, 14, 7);
+  rect(1215, 34, 180, 24, 12);
 
   // Health fill - green when healthy, red when polluted
-  let barWidth = map(environmentalHealth, 0, 100, 0, 76);
+  let barWidth = map(environmentalHealth, 0, 100, 0, 171);
   let barR = map(environmentalHealth, 0, 100, 200, 60);
   let barG = map(environmentalHealth, 0, 100, 80, 180);
   fill(barR, barG, 70);
-  rect(542, 22, barWidth, 10, 5);
+  rect(1220, 37, barWidth, 17, 8);
 }
 
 // Display instructions for the user
@@ -654,15 +655,15 @@ function drawInstructions() {
   // Semi-transparent black background for text readability
   fill(0, 0, 0, 150);
   noStroke();
-  rect(10, 10, 280, 80, 10);
+  rect(10, 10, 315, 90, 10);
   
   // White text with instructions
   fill(255);
-  textSize(14);
+  textSize(16);
   textAlign(LEFT, TOP);
-  text("WAVE HAND = PLANT", 20, 20);
-  text("STAY QUIET = CLEAN AIR", 20, 45);
-  text("LOUD NOISE = POLLUTION", 20, 67);
+  text("WAVE HAND TO PLANT", 23, 23);
+  text("STAY QUIET = CLEAN AIR", 23, 51);
+  text("LOUD NOISE = POLLUTION", 23, 75);
 }
 
 // This is creating and releasing letter particles from a position
@@ -672,7 +673,7 @@ function releaseLetters(x, y, amount) {
     // Pick random letter from message
     let letterIndex = floor(random(message.length));
     
-    // This is to create LetterParticle and add to letters array
+    // This is to create new LetterParticle and add to letters array
     letters.push(new LetterParticle(x, y, message[letterIndex]));
   }
 }
