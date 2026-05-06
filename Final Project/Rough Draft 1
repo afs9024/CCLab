@@ -1,0 +1,137 @@
+<script src="https://unpkg.com/ml5@1/dist/ml5.js"></script>
+let handPose;
+let video;
+let hands = [];
+let options = { maxHands: 1, flipped: false };
+let particles = [];
+let message = "Dear Future Me";
+let messageIndex = 0;
+
+function preload() {
+  handPose = ml5.handPose(options);
+}
+
+function setup() {
+  createCanvas(640, 480);
+  video = createCapture(VIDEO);
+  video.size(640, 480);
+  video.hide();
+  handPose.detectStart(video, gotHands);
+  
+  // Create particles from the message
+  textSize(40);
+  textAlign(CENTER, CENTER);
+  let spacing = 25;
+  let startX = width/2 - (message.length * spacing)/2;
+  
+  for(let i = 0; i < message.length; i++) {
+    let x = startX + i * spacing;
+    let y = height/2;
+    particles.push(new TextParticle(x, y, message[i]));
+  }
+}
+
+function gotHands(results) {
+  hands = results;
+}
+
+function draw() {
+  background(0, 30);
+  
+  // Draw video feed with low opacity
+  push();
+  translate(width, 0);
+  scale(-1, 1);
+  tint(255, 50);
+  image(video, 0, 0, width, height);
+  pop();
+  
+  // Update and display all particles
+  for(let i = 0; i < particles.length; i++) {
+    // Check for hand interaction
+    for(let j = 0; j < hands.length; j++) {
+      let hand = hands[j];
+      let p1 = hand.keypoints[8]; // index finger tip
+      particles[i].interact(p1.x, p1.y);
+    }
+    
+    particles[i].drift();
+    particles[i].display();
+  }
+  
+  // Draw hand points
+  for(let i = 0; i < hands.length; i++) {
+    let hand = hands[i];
+    let p1 = hand.keypoints[8];
+    fill(255, 200, 0, 150);
+    noStroke();
+    circle(p1.x, p1.y, 20);
+  }
+}
+
+class TextParticle {
+  constructor(x, y, letter) {
+    this.x = x;
+    this.y = y;
+    this.x0 = x;
+    this.y0 = y;
+    this.letter = letter;
+    this.accX = 0;
+    this.accY = 0;
+    this.speedX = 0;
+    this.speedY = 0;
+    this.away = 0.3;
+    this.opacity = 255;
+    this.size = 40;
+  }
+  
+  display() {
+    push();
+    fill(255, this.opacity);
+    textSize(this.size);
+    textAlign(CENTER, CENTER);
+    text(this.letter, this.x, this.y);
+    
+    // Draw trailing ghost
+    fill(100, 200, 255, this.opacity * 0.3);
+    textSize(this.size * 0.8);
+    text(this.letter, this.x + 5, this.y + 5);
+    pop();
+  }
+  
+  interact(handX, handY) {
+    let d = dist(handX, handY, this.x, this.y);
+    if(d < 80) {
+      this.accX = (handX - this.x) * -this.away;
+      this.accY = (handY - this.y) * -this.away;
+      this.speedX += this.accX;
+      this.speedY += this.accY;
+      this.opacity = map(d, 0, 80, 100, 255);
+    }
+    
+    this.speedX = this.speedX * 0.9;
+    this.speedY = this.speedY * 0.9;
+    
+    this.x += this.speedX;
+    this.y += this.speedY;
+  }
+  
+  drift() {
+    // Slowly drift over time
+    let driftX = map(noise(this.x * 0.01, frameCount * 0.01), 0, 1, -0.5, 0.5);
+    let driftY = map(noise(this.y * 0.01, frameCount * 0.01), 0, 1, -0.5, 0.5);
+    
+    this.x += driftX;
+    this.y += driftY;
+    
+    // Slowly return toward original position
+    this.x = lerp(this.x, this.x0, 0.02);
+    this.y = lerp(this.y, this.y0, 0.02);
+    
+    // Opacity fades and returns
+    this.opacity = lerp(this.opacity, 255, 0.02);
+    
+    // Size pulses slowly
+    this.size = 40 + sin(frameCount * 0.02 + this.x) * 3;
+  }
+}
