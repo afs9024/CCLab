@@ -11,14 +11,14 @@ class Branch {
     this.endX = endX;
     this.endY = endY;
     
-    // Current position starts at the beginning (for smooth growth animation)
+    // This shows that the current position starts at the beginning (for smooth growth animation)
     this.currentEndX = startX;
     this.currentEndY = startY;
     
-    // Level tracks how many generations deep this branch is (trunk = 0, first split = 1, etc.)
+    // This shows that the level tracks how many generations deep this branch is (trunk = 0, first split = 1, etc.)
     this.level = level;
     
-    // Control variables for branch behavior
+    // This shows that the control variables for branch behavior
     this.canSplit = true;    // Whether this branch can split into new branches
     this.isGrowing = true;   // Whether branch is currently growing
     this.isDead = false;     // Whether branch should be removed
@@ -31,7 +31,7 @@ class Branch {
     this.thickness = map(level, 0, 9, 16, 2);
   }
 
-  // Update function called every frame to animate branch growth and handle aging
+  // This is to Update function called every frame to animate branch growth and handle aging
   update() {
     // Only grow if the branch is still in growing state
     if (this.isGrowing == true) {
@@ -152,7 +152,7 @@ class Branch {
     }
   }
 
-  // splitToward() creates branches that lean toward a target (hand or sound)
+  // This is to splitToward() creates branches that lean toward a target (hand or sound)
   // This makes the tree interactive and responsive
   splitToward(targetX, targetY) {
     if (this.canSplit == true) {
@@ -251,22 +251,22 @@ class LetterParticle {
     this.speedX = this.speedX * 0.98;
     this.speedY = this.speedY * 0.98;
     
-    // Decrease life (particle fades over time)
+    // This is to decrease life (particle fades over time)
     this.life--;
 
-    // Mark as dead when life expires
+    // This us to mark as dead when life expires
     if (this.life < 0) {
       this.isDead = true;
     }
   }
 
-  // Draw the letter particle
+  // This is to draw the letter particle
   display() {
-    // Calculate transparency based on remaining life
-    // Particles fade out as they age
+    // Used to calculate transparency based on remaining life
+    // These are the particles fade out as they age
     let a = map(this.life, 0, 170, 0, 255);
 
-    // Draw the letter
+    // This is to draw the letter
     fill(255, 240, 180, a);  // Warm yellow/white color
     noStroke();
     textSize(this.size);
@@ -275,7 +275,7 @@ class LetterParticle {
   }
 }
 
-// NEW: Raindrop class represents nourishing rain
+// Raindrop class represents nourishing rain
 // Rain shows nature's healing cycle - when we care for our environment,
 // rain comes to nourish the trees we plant for our future selves
 class Raindrop {
@@ -319,7 +319,7 @@ let video;           // Webcam video
 let hands = [];      // Array storing detected hands
 let options = { maxHands: 1, flipped: true };  // Track 1 hand, flip for mirror effect
 
-// NEW: Face tracking variables (ml5.js face mesh detection)
+//Face tracking variables (ml5.js face mesh detection)
 // Face presence shows the user is "watching over" their future world
 // When the user is present and caring, the environment slowly heals
 let faceMesh;
@@ -329,9 +329,9 @@ let faceOptions = { maxFaces: 1, refineLandmarks: false, flipped: true };
 // Tree and particle arrays
 let branches = [];   // All branch objects
 let letters = [];    // All letter particle objects
-let raindrops = [];  // NEW: All raindrop objects (nourishing rain)
+let raindrops = [];  //All raindrop objects (nourishing rain)
 
-// NEW: Environmental health tracks the well-being of the future world
+//Environmental health tracks the well-being of the future world
 // Connects user actions to the world the future self will live in
 // Quiet + caring presence = healthy. Loud noise = pollution = damaged
 let environmentalHealth = 100;  // 0 = polluted, 100 = healthy
@@ -344,7 +344,7 @@ let osc;             // Oscillator for creating tones
 let envelope;        // Envelope for sound shaping
 let notes = [261.63, 293.66, 329.63, 349.23, 392.0, 440.0, 493.88, 523.25];  // Musical scale
 
-// Microphone input variables
+// This is the microphone input variables
 let mic;             // Microphone object
 let micLevel = 0;    // Current microphone volume
 let oldMicLevel = 0; // Previous frame's volume (for detecting changes)
@@ -353,7 +353,7 @@ let oldMicLevel = 0; // Previous frame's volume (for detecting changes)
 // preload() runs once before setup, loads the tracking models
 function preload() {
   handPose = ml5.handPose(options);
-  faceMesh = ml5.faceMesh(faceOptions);  // NEW: load face mesh model
+  faceMesh = ml5.faceMesh(faceOptions);  //Load face mesh model
 }
 
 // This is the setup() runs once at start, initializes everything
@@ -369,7 +369,7 @@ function setup() {
   // This is to start hand detection on the video
   handPose.detectStart(video, gotHands);
 
-  // NEW: This is to start face detection (caring presence)
+  //This is to start face detection (caring presence)
   faceMesh.detectStart(video, gotFaces);
 
   // Initialize sound oscillator
@@ -395,7 +395,7 @@ function gotHands(results) {
   hands = results;  // Store detected hands
 }
 
-// NEW: callback function for face tracking results
+//Callback function for face tracking results
 // Face presence means user is watching over their future world
 function gotFaces(results) {
   faces = results;
@@ -445,7 +445,7 @@ function draw() {
     }
   }
 
-  // NEW: FACE PRESENCE - user "watching over" their future
+  //FACE PRESENCE - user "watching over" their future
   // When user is present and caring, environment slowly heals + rain falls
   if (faces.length > 0) {
     // Slowly increase environmental health (caring presence helps the world)
@@ -491,7 +491,7 @@ function draw() {
   // This responds to clapping, speaking, or any sudden sound
   if (micLevel > 0.07) {
     if (oldMicLevel < 0.07) {
-      // NEW: Loud noise represents pollution - it damages the environment
+      //Loud noise represents pollution - it damages the environment
       // The future world degrades when we are too loud/destructive
       // (The sky color will visibly turn gray as health drops)
       environmentalHealth = environmentalHealth - 12;
@@ -550,7 +550,7 @@ function draw() {
   }
   letters = aliveLetters;
 
-  // NEW: UPDATE AND DRAW ALL RAINDROPS
+  //UPDATE AND DRAW ALL RAINDROPS
   // Rain nourishes the tree and represents environmental healing
   for (let i = 0; i < raindrops.length; i++) {
     raindrops[i].update();
@@ -575,16 +575,16 @@ function draw() {
 
   // This is to draw microphone level indicator
   drawMicCircle();
-  // NEW: draw environmental health indicator (visual feedback)
+  //Draw environmental health indicator (visual feedback)
   drawHealthBar();
   // Draw instructions for user
   drawInstructions();
 }
 
 // HELPER FUNCTIONS
-// Draws the nature background (sky, sun, hills, ground)
-// NEW: Sky and sun colors now shift based on environmentalHealth
-// Healthy = bright blue sky and warm sun. Polluted = gray smoggy sky
+// It draws the nature background (sky, sun, hills, ground)
+//The sky and sun colors now shift based on environmentalHealth
+//It's healthy = bright blue sky and warm sun. Polluted = gray smoggy sky
 function drawNatureBackground() {
   // map() the health value to sky color components
   // High health = bright blue (145, 200, 235), low health = gray (110, 105, 110)
@@ -634,7 +634,7 @@ function drawMicCircle() {
   circle(1328, 726, s);
 }
 
-// NEW: Draws a small leaf-shaped indicator showing environmental health
+//Draws a small leaf-shaped indicator showing environmental health
 // Visual feedback so users see how their actions affect the future world
 function drawHealthBar() {
   // Bar background
@@ -650,14 +650,14 @@ function drawHealthBar() {
   rect(1220, 37, barWidth, 17, 8);
 }
 
-// Display instructions for the user
+// This is to display instructions for the user
 function drawInstructions() {
   // Semi-transparent black background for text readability
   fill(0, 0, 0, 150);
   noStroke();
   rect(10, 10, 315, 90, 10);
   
-  // White text with instructions
+  // This is white text with instructions
   fill(255);
   textSize(16);
   textAlign(LEFT, TOP);
