@@ -27,7 +27,7 @@ class Branch {
     this.life = 1000;
     
     // Branch thickness decreases as level increases (trunk is thick, tips are thin)
-    // map() learned in class: maps level 0-9 to thickness 16-2
+    // map() maps level 0-9 to thickness 16-2
     this.thickness = map(level, 0, 9, 16, 2);
   }
 
@@ -36,7 +36,7 @@ class Branch {
     // Only grow if the branch is still in growing state
     if (this.isGrowing == true) {
       // lerp() creates smooth animation by moving current position toward target
-      // lerp(start, end, amount) - we use 0.015 for slow, organic growth
+      // lerp(start, end, amount) - use 0.015 for slow, organic growth
       this.currentEndX = lerp(this.currentEndX, this.endX, 0.015);
       this.currentEndY = lerp(this.currentEndY, this.endY, 0.015);
 
@@ -52,7 +52,7 @@ class Branch {
     // This is decrease life every frame (branches fade and die over time)
     this.life--;
 
-    // This is how we mark branch as dead when life reaches zero
+    // This is how mark branch as dead when life reaches zero
     if (this.life < 0) {
       this.isDead = true;
     }
@@ -61,7 +61,7 @@ class Branch {
   // This is display function draws the branch on screen
   display() {
     // Calculate alpha (transparency) based on remaining life
-    // map() converts life value to opacity: full life = opaque, zero life = transparent
+    // map() converts life value to opacity: full life = not transparent, zero life = transparent
     let a = map(this.life, 0, 1000, 0, 255);
 
     // Draw branch as a line
@@ -84,7 +84,7 @@ class Branch {
   // This is split() creates two new child branches from this branch
   // This is called for automatic/random tree growth
   split() {
-    // This is only split if allowed and tree hasn't grown too large
+    // This is only split if allowed and tree has not grown too large
     if (this.canSplit == true) {
       if (branches.length < 90) {
         // This is prevent this branch from splitting again
@@ -95,11 +95,11 @@ class Branch {
         let dy = this.endY - this.startY;
 
         // Try to create new branches with proper spacing
-        // We'll try multiple times to find good positions
+        // Try multiple times to find good positions
         for (let attempt = 0; attempt < 10; attempt++) {
           // Create first new branch with variation
           // Multiply by 0.7 to make child branches shorter than parent
-          // Add random() for organic, natural-looking variation
+          // Add random() for organic, natural looking variation
           let newDX1 = dx * 0.7 + random(-60, 60);
           let newDY1 = dy * 0.7 - random(20, 50);  // Negative to grow upward
 
@@ -145,7 +145,7 @@ class Branch {
           }
         }
 
-        // Provide audio and visual feedback
+        // This provides audio and visual feedback
         playNote();  // Play a musical note
         releaseLetters(this.endX, this.endY, 2);  // Release letter particles
       }
@@ -220,7 +220,7 @@ class Branch {
 }
 
 // LetterParticle class represents floating letters from the message
-// Shows the concept of sending a message to the future
+// This shows the concept of sending a message to the future
 class LetterParticle {
   // Constructor initializes a letter particle at a position
   constructor(x, y, letter) {
